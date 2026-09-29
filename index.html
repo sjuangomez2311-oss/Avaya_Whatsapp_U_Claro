@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Virtual | Reconexión IMEI WhatsApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        claroRed: '#da291c',
+                        claroDark: '#b22222',
+                        claroGray: '#f4f4f4'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Estilos Documentación Teórica */
+        .doc-content h2 { font-size: 1.5rem; font-weight: bold; color: #da291c; margin-top: 2rem; margin-bottom: 1rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; }
+        .doc-content h3 { font-size: 1.25rem; font-weight: 600; color: #1f2937; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .doc-content p { margin-bottom: 1rem; color: #374151; line-height: 1.6; }
+        .doc-content ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; color: #374151; }
+        .doc-content table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+        .doc-content th, .doc-content td { border: 1px solid #d1d5db; padding: 0.5rem; text-align: left; }
+        .doc-content th { background-color: #f3f4f6; font-weight: bold; }
+        
+        /* Ocultar elementos */
+        .hidden-tab { display: none !important; }
+        
+        /* Estilos Móvil Cliente */
+        .mobile-screen {
+            background-image: url('https://i.pinimg.com/originals/8f/ba/cb/8fbacbd464e996966eb9d4a6b7a9c21e.jpg');
+            background-size: cover;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- HEADER CORPORATIVO -->
+    <header class="bg-claroRed text-white shadow-md flex-none z-20">
+        <div class="px-6 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <i class="fa-solid fa-u text-3xl font-bold bg-white text-claroRed py-1 px-3 rounded-full shadow-inner"></i>
+                <div>
+                    <h1 class="text-xl font-bold uppercase tracking-wide">Universidad Claro</h1>
+                    <p class="text-xs font-light text-red-100">Célula Reconexión IMEI WhatsApp</p>
+                </div>
+            </div>
+            <div class="flex space-x-2 bg-red-800/30 p-1 rounded-lg">
+                <button onclick="switchMainTab('teoria')" id="nav-teoria" class="px-4 py-2 bg-claroDark text-white font-bold rounded-md transition shadow"><i class="fa-solid fa-book"></i> Biblioteca Teórica</button>
+                <button onclick="switchMainTab('practica')" id="nav-practica" class="px-4 py-2 hover:bg-claroDark text-white font-bold rounded-md transition"><i class="fa-solid fa-gamepad"></i> Simuladores Prácticos</button>
+            </div>
+            <div class="text-right border-l-2 border-red-300 pl-4 hidden md:block">
+                <p class="text-sm font-bold tracking-wide">Tutor: Juan Sebastián Hernández</p>
+                <p class="text-xs text-red-100">Mesa de Experiencia del Cliente</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- ÁREA 1: BIBLIOTECA TEÓRICA -->
+    <main id="area-teoria" class="flex flex-1 overflow-hidden animate-fade-in block">
+        <!-- Sidebar Menú Documentación -->
+        <aside class="w-72 bg-white border-r border-gray-200 overflow-y-auto flex-none shadow-lg z-10">
+            <div class="p-5 bg-gray-50 border-b border-gray-200 sticky top-0">
+                <h2 class="font-bold text-gray-800 uppercase text-xs tracking-widest"><i class="fa-solid fa-list-ul mr-2"></i> Índice Temático</h2>
+            </div>
+            <nav class="p-3 space-y-2">
+                <button onclick="showDoc('doc-avaya')" class="doc-nav-btn active w-full text-left px-4 py-3 text-sm font-bold rounded-lg text-claroRed bg-red-50 border border-red-100 transition"><i class="fa-solid fa-desktop w-6 text-center"></i> 1. AVAYA Inicio</button>
+                <button onclick="showDoc('doc-casos')" class="doc-nav-btn w-full text-left px-4 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 border border-transparent transition"><i class="fa-solid fa-briefcase w-6 text-center"></i> 2. Mis Casos</button>
+                <button onclick="showDoc('doc-marca')" class="doc-nav-btn w-full text-left px-4 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 border border-transparent transition"><i class="fa-solid fa-star w-6 text-center"></i> 3. Personalidad de Marca</button>
+                <button onclick="showDoc('doc-ortografia')" class="doc-nav-btn w-full text-left px-4 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 border border-transparent transition"><i class="fa-solid fa-spell-check w-6 text-center"></i> 4. Ortografía y Redacción</button>
+                <button onclick="showDoc('doc-crc')" class="doc-nav-btn w-full text-left px-4 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 border border-transparent transition"><i class="fa-solid fa-scale-balanced w-6 text-center"></i> 5. Res. 7684 CRC</button>
+            </nav>
+        </aside>
+
+        <!-- Contenido Documentación -->
+        <section class="flex-1 overflow-y-auto bg-white p-10 doc-content shadow-inner">
+            <div class="max-w-4xl mx-auto">
+                
+                <!-- Documento 1: AVAYA Inicio -->
+                <div id="doc-avaya" class="doc-section block animate-fade-in">
+                    <h1 class="text-4xl font-black text-gray-900 mb-4 tracking-tight">INICIO</h1>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                        <h2 class="text-lg font-bold text-blue-800 !mt-0 !mb-2 !border-0 !p-0">1. Resumen – Inicio</h2>
+                        <p class="text-sm text-blue-900 !mb-0">El artículo describe el procedimiento para acceder, configurar y gestionar perfiles de agentes en la herramienta AVAYA. Incluye instrucciones sobre el manejo de estados de agente, estadísticas, configuraciones de usuario y procedimientos para solicitar asistencia y cerrar sesión. El propósito es garantizar la correcta atención al cliente por parte del agente mediante el correcto uso y manejo de la herramienta AVAYA para el canal de WhatsApp.</p>
+                    </div>
+                    
+                    <h2>2. Glosario – Inicio</h2>
+                    <table class="shadow-sm rounded-lg overflow-hidden">
+                        <tr><th>Concepto</th><th>Definición</th></tr>
+                        <tr><td>SMCC (Social Media Contact Center)</td><td>Es una solución que habilita la gestión de atención al cliente en canales digitales. Incorpora dentro de sus funcionalidades los conceptos más importantes de la gestión de centros de contacto.</td></tr>
+                        <tr><td>Agente</td><td>Persona que atiende los casos que ingresan a las diferentes colas. Es un usuario que recibe de forma automática los casos, o bien le son reasignados por un usuario administrador o supervisor.</td></tr>
+                        <tr><td>Caso</td><td>Cuando un cliente se comunique a través de cualquiera de los canales habilitados, la herramienta abrirá un caso y le asignará un número único. Cada caso contiene todas las interacciones realizadas con el cliente acerca de un mismo tema, por el mismo canal.</td></tr>
+                        <tr><td>Mensaje</td><td>Son todas las interacciones que se presentan dentro de la conversación en un caso.</td></tr>
+                        <tr><td>Canal</td><td>Es el medio por el cual ingresan los mensajes de las personas que se contactan con la compañía. Se identifican con su correspondiente ícono. En este caso, el canal es WhatsApp.</td></tr>
+                        <tr><td>Emoji</td><td>Imágenes o pictogramas que son usados para expresar una idea, emoción o sentimiento en medios de comunicación digital.</td></tr>
+                        <tr><td>Cola</td><td>Las colas representan los grupos de atención a donde son direccionadas las interacciones recibidas a través del canal.</td></tr>
+                        <tr><td>Etiquetas</td><td>Corresponde al motivo por el cual se contacta el cliente con nuestro canal de atención. Se conoce también como tipificación.</td></tr>
+                        <tr><td>Estado del caso</td><td>Fases que identifican al caso. Un caso puede estar en estado abierto o cerrado.</td></tr>
+                        <tr><td>Estado del agente</td><td>Corresponde a los diferentes estados en los que se puede colocar un agente durante su turno.</td></tr>
+                        <tr><td>Timer</td><td>Tiempo estandarizado que se tiene en Avaya SMCC, para mantener una conversación fluida entre agente y usuario, el cual tendrá un tiempo de 4 minutos para poder retomar el caso. Llegado que exista un abandono por parte del agente o cliente, el sistema procederá a enviar el caso a la cola, a espera de respuesta por parte del usuario.</td></tr>
+                        <tr><td>Cierre del sistema</td><td>Ocurre cuando el usuario al estar en cola no retorna a la conversación en un tiempo estimado de 10 minutos.</td></tr>
+                        <tr><td>Cierre por agente</td><td>Se presenta cuando el asesor dio solución al requerimiento escalado por el usuario, posterior a ello realiza envío a la encuesta de satisfacción.</td></tr>
+                    </table>
+
+                    <h2>3. Procedimiento – Inicio</h2>
+                    <h3>3.1 Acceso al sistema</h3>
+                    <p>Para ingresar a la plataforma en el perfil Asesor, debes acceder a la siguiente ruta: https://claro-co.ysocial.net/agent/#/login</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 1. Ingreso AVAYA.jpg" alt="Ingreso AVAYA" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 1. Ingreso AVAYA</figcaption>
+                    </figure>
+
+                    <p>En esta ruta ingresas con el usuario y contraseña autorizados. Luego del ingreso, visualizarás la siguiente pantalla:</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 2. Mensaje de información.jpg" alt="Mensaje de información" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 2. Mensaje de información</figcaption>
+                    </figure>
+                    
+                    <h3>3.2 Configuraciones y perfil</h3>
+                    <p>En la pantalla inicial, mostrada anteriormente, se visualizan diferentes aspectos. A continuación, se detallará la información encontrada en el perfil del Asesor, ingresando de la siguiente forma:</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 3. Perfil.jpg" alt="Perfil AVAYA" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 3. Perfil</figcaption>
+                    </figure>
+
+                    <p><strong>Solicitar asistencia:</strong> por medio de esta opción el agente podrá solicitar ayuda por parte de su supervisor. Para realizarlo debe hacer clic en la campana.</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 4. Datos de usuario.jpg" alt="Datos de usuario" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[200px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 4. Datos de usuario</figcaption>
+                    </figure>
+
+                    <p>Al habilitar esta opción, el supervisor recibirá una notificación indicando que se requiere apoyo como se visualiza en la siguiente pantalla:</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 5. Notificaciones.jpg" alt="Notificaciones" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 5. Notificaciones</figcaption>
+                    </figure>
+                    
+                    <p>El supervisor abrirá la notificación e iniciará un chat con el agente. Para ello, debe seleccionar el nombre del agente.</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 6. Chat agente.jpg" alt="Chat agente" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 6. Chat agente</figcaption>
+                    </figure>
+
+                    <p>Al iniciar el chat, se visualizará de la siguiente forma para iniciar la interacción con el supervisor:</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 7. Interacción por chat.jpg" alt="Interacción por chat" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 7. Interacción por chat</figcaption>
+                    </figure>
+
+                    <p><strong>Estadísticas:</strong> por medio de la opción de Estadísticas el agente podrá visualizar sus métricas de desempeño, ya sea de la sesión en la que está o del día.</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 8. Estadísticas.jpg" alt="Estadísticas" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[200px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 8. Estadísticas</figcaption>
+                    </figure>
+
+                    <p>En la sección de Mensajes se muestran las estadísticas del asesor con respecto a los casos que ha atendido durante la sesión, así como de su gestión durante el día:<br>
+                    - Asignados: corresponde al número de casos recibidos por el agente.<br>
+                    - Descartados: corresponde al número de casos rechazados.<br>
+                    - Respondidos: corresponde al número de casos con al menos una interacción por parte del agente, pero no han sido finalizados.<br>
+                    - Finalizados: corresponde al número de casos gestionados por el asesor y que han sido tipificados y cerrados.<br>
+                    - Desasignados: corresponde al número de casos que inicialmente fueron asignados, pero luego se reasignaron a otro agente.<br>
+                    - Retornados: corresponde al número de casos que son devueltos a la cola.</p>
+                    <p>Agrupados:<br>
+                    - TMO: corresponde al tiempo de atención de los casos gestionados por el agente.<br>
+                    - TXH (transacciones por hora): corresponde a la cantidad de transacciones realizadas por hora.<br>
+                    - RXH (respuestas por hora): corresponde a la cantidad de mensajes respondidos por hora.<br>
+                    - TML: (tiempo medio de lectura): corresponde al tiempo que se toma el agente para leer el mensaje. Se calcula desde que hace clic en el mensaje hasta que toma alguna acción de respuesta.</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 9. Opción Ver mensajes.jpg" alt="Opción Ver mensajes" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 9. Opción Ver mensajes</figcaption>
+                    </figure>
+
+                    <p>Posteriormente, en la sección de Tiempos se puede visualizar la duración de cada uno de los estados por los que pasó el agente, tanto en la sesión como en el día.</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 10. Opción Tiempos.jpg" alt="Opción Tiempos" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 10. Opción Tiempos</figcaption>
+                    </figure>
+                    
+                    <p>Finalmente, en la sección de Actividad por intervalo se podrán ver los casos atendidos por el agente y los estados (asignados, respondidos, descartados, finalizados) por los que pasaron.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 11. Opción Actividad por intervalo.jpg" alt="Opción Actividad por intervalo" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 11. Opción Actividad por intervalo</figcaption>
+                    </figure>
+
+                    <p><strong>Ajustes:</strong> el agente podrá realizar las siguientes configuraciones sobre la interfaz de su usuario:</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 12. Opción Ajustes.jpg" alt="Opción Ajustes" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[200px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 12. Opción Ajustes</figcaption>
+                    </figure>
+
+                    <p>
+                    - Habilitar sonidos: activa o desactiva sonidos.<br>
+                    - Tamaño de tipografía: tamaño de letra.<br>
+                    - Tipografía: tipo de letra.<br>
+                    - Firma corta: firma corta a utilizar.
+                    </p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 13. Ajustes del agente.jpg" alt="Ajustes del agente" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 13. Ajustes del agente</figcaption>
+                    </figure>
+
+                    <p><strong>Cerrar sesión:</strong> seleccionar el botón en el panel de perfil. Nota: no permitirá cerrar sesión hasta que ya no tenga ningún caso en curso.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 14. Botón Cerrar sesión.jpg" alt="Botón Cerrar sesión" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[200px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 14. Botón Cerrar sesión</figcaption>
+                    </figure>
+
+                    <p>Posteriormente, se debe confirmar el cierre de sesión, haciendo clic en Aceptar.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 15. Botón Aceptar.jpg" alt="Botón Aceptar" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[300px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 15. Botón Aceptar</figcaption>
+                    </figure>
+
+                    <p>Se indica que ha cerrado sesión correctamente.</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 16. Cierre de sesión correcto.jpg" alt="Cierre de sesión correcto" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 16. Cierre de sesión correcto</figcaption>
+                    </figure>
+
+                    <h3>3.3 Estados de agente</h3>
+                    <p>Al momento de iniciar sesión, el agente podrá visualizar los siguientes estados. Para cambiar de estado, solo se debe seleccionar otro de acuerdo con la necesidad.</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 17. Estados.jpg" alt="Estados" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 17. Estados</figcaption>
+                    </figure>
+                    
+                    <p>- Disponible: el agente no tiene mensajes asignados y está disponible.<br>
+                    - Break: no disponible, tiempo de break.<br>
+                    - Capacitación: no disponible, en capacitación.<br>
+                    - Baño: no disponible, en baño.<br>
+                    - Almuerzo: no disponible, en almuerzo.<br>
+                    - Backoffice: no disponible, labores backoffice.<br>
+                    - Retroalimentación: no disponible, en retroalimentación.<br>
+                    - Fin de turno: no disponible, termina turno.</p>
+                    <p>Estados automáticos:<br>
+                    - Trabajando (Working): tiene mensajes asignados. Capacidad completa.<br>
+                    - Trabajando (Working): tiene mensajes y puede recibir nuevos (capacidad no completa).<br>
+                    - Trabajando (Working): tiene mensajes y solicitó cambio a estado no disponible (efectivo al completar casos).</p>
+
+                    <h2>4. Preguntas frecuentes – Inicio</h2>
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded border border-gray-200">
+                            <p class="font-bold text-gray-800 !mb-1">¿Qué acciones debe realizar un agente para solicitar asistencia a su supervisor?</p>
+                            <p class="text-sm !mb-0">El agente debe hacer clic en la campana de notificaciones en su perfil, lo que enviará una alerta al supervisor para iniciar un chat de asistencia.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded border border-gray-200">
+                            <p class="font-bold text-gray-800 !mb-1">¿Qué información se puede visualizar en la sección de “Estadísticas”?</p>
+                            <p class="text-sm !mb-0">En la sección de Estadísticas, el agente puede ver su rendimiento, incluyendo los casos asignados, descartados, respondidos, finalizados, desasignados, y otros indicadores como el tiempo medio de lectura.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded border border-gray-200">
+                            <p class="font-bold text-gray-800 !mb-1">¿Qué sucede cuando un agente intenta cerrar sesión con casos pendientes?</p>
+                            <p class="text-sm !mb-0">No se permitirá al agente cerrar la sesión si aún tiene casos en curso; deberá finalizar todos los casos antes de poder cerrar sesión.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documento 2: Mis Casos -->
+                <div id="doc-casos" class="doc-section hidden animate-fade-in">
+                    <h1 class="text-4xl font-black text-gray-900 mb-4 tracking-tight">MIS CASOS</h1>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                        <h2 class="text-lg font-bold text-blue-800 !mt-0 !mb-2 !border-0 !p-0">1. Resumen – Mis casos</h2>
+                        <p class="text-sm text-blue-900 !mb-0">El artículo describe cómo los agentes deben gestionar los casos recibidos a través de la herramienta AVAYA, específicamente en el canal de WhatsApp. Se detallan los procedimientos para la recepción, gestión, cierre y tipificación de casos, además de la utilización de respuestas predefinidas y cómo adjuntar archivos.</p>
+                    </div>
+                    
+                    <h2>3. Mis casos – Mis casos</h2>
+                    <h3>3.1. Ingreso y visualización</h3>
+                    <p>En el momento en el que el agente se coloque en estado “Disponible”, empezará a recibir casos hasta el momento en el que esté completa la capacidad de casos simultáneos. Cuando ingresa un caso se visualiza de la siguiente forma:</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 1. Casos.jpg" alt="Casos" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 1. Casos</figcaption>
+                    </figure>
+
+                    <p>Para visualizar el caso, debes pulsar sobre el logo de WhatsApp. Adicionalmente, podrás ver la siguiente información preliminar: el nombre de la persona que está escribiendo y la cola en la que está el caso.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 2. Mensajes de WhatsApp.jpg" alt="Mensajes de WhatsApp" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 2. Mensajes de WhatsApp</figcaption>
+                    </figure>
+
+                    <p>Al seleccionar, se abrirá el caso y el agente podrá visualizar el historial de mensajes que ha escrito el cliente.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 3. Historial de mensajes.jpg" alt="Historial de mensajes" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 3. Historial de mensajes</figcaption>
+                    </figure>
+
+                    <h3>3.2. Gestión de casos</h3>
+                    <p>Cuando el asesor recibe el caso e inicia su gestión, podrá dar sus respuestas de la siguiente manera: Para dar la bienvenida a los clientes o dar respuesta a alguna de sus preguntas, tendrá habilitado el cuadro de texto en donde el agente podrá redactar su respuesta o, en su defecto, podrá hacer uso de las diferentes plantillas que ya están preestablecidas.</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 4. Gestión de casos.jpg" alt="Gestión de casos" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 4. Gestión de casos</figcaption>
+                    </figure>
+
+                    <p>La ventana de Respuestas predefinidas cuenta con diferentes opciones que se describirán a continuación:</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 5. Respuestas predefinidas.jpg" alt="Respuestas predefinidas" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 5. Respuestas predefinidas</figcaption>
+                    </figure>
+                    
+                    <p><strong>Candado:</strong> la opción de un candado es la que permitirá filtrar las diferentes plantillas: Las que apliquen al caso o las que no apliquen.</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 6. Filtrar.jpg" alt="Filtrar" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[100px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 6. Filtrar</figcaption>
+                    </figure>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 7. Opción candado.jpg" alt="Opción candado" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 7. Opción candado</figcaption>
+                    </figure>
+                    
+                    <p><strong>Favoritas:</strong> muestra las respuestas predefinidas que se marcaron como de preferencia del agente.</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 8. Favoritos.jpg" alt="Favoritos" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[100px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 8. Favoritos</figcaption>
+                    </figure>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 9. Respuestas favoritas.jpg" alt="Respuestas favoritas" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 9. Respuestas favoritas</figcaption>
+                    </figure>
+                    
+                    <p><strong>Ícono mundo:</strong> esta opción les permitirá filtrar las diferentes plantillas (Las globales o no globales).</p>
+                    
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 10. Ícono mundo.jpg" alt="Ícono mundo" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[100px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 10. Ícono mundo</figcaption>
+                    </figure>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 11. Plantillas globales no globales.jpg" alt="Plantillas globales no globales" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 11. Plantillas globales no globales</figcaption>
+                    </figure>
+
+                    <p><strong>Tipo:</strong> en esta opción el agente podrá filtrar las respuestas predefinidas de acuerdo con parametrización (servicio, cola o propias).</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 12. Tipo.jpg" alt="Tipo" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[100px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 12. Tipo</figcaption>
+                    </figure>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 13. Filtrar respuesta por tipo.jpg" alt="Filtrar respuesta por tipo" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 13. Filtrar respuesta por tipo</figcaption>
+                    </figure>
+
+                    <p>Para seleccionar una respuesta predefinida, se debe hacer clic en el icono "Insertar respuesta".</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 14. Insertar respuesta.jpg" alt="Insertar respuesta" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 14. Insertar respuesta</figcaption>
+                    </figure>
+
+                    <p>A continuación, se puede visualizar cómo queda en el cuadro de texto la información previamente seleccionada.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 15. Información de la respuesta.jpg" alt="Información de la respuesta" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[400px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 15. Información de la respuesta</figcaption>
+                    </figure>
+
+                    <p><strong>Adjuntar archivos:</strong> para adjuntar archivos a la conversación, debes pulsar en Adjuntar. Solo permite adjuntar archivos en formatos PDF, JPG, JPEG o PNG. Los archivos por enviar deben ser únicamente los avalados por Claro. Al realizar esta acción, aparece una ventana emergente donde se selecciona el archivo que se desea enviar.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 16. Adjuntar archivos.jpg" alt="Adjuntar archivos" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[400px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 16. Adjuntar archivos</figcaption>
+                    </figure>
+
+                    <p>Pulsando la opción Agregar, se abre el explorador del equipo para seleccionar el archivo. Selecciónalo y pulsa la opción Abrir.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 17. Agregar archivo.jpg" alt="Agregar archivo" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 17. Agregar archivo</figcaption>
+                    </figure>
+
+                    <p>Luego de realizar esta acción, se visualiza la siguiente pantalla, en donde ya se puede ver el archivo cargado.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 18. Visualiza archivo adjunto.jpg" alt="Visualiza archivo adjunto" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[400px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 18. Visualiza archivo adjunto</figcaption>
+                    </figure>
+
+                    <p>Selecciona la opción Aceptar y observarás cómo en la opción de Adjuntar aparece el número de archivos cargados.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 19. Opción adjuntar.jpg" alt="Opción adjuntar" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[400px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 19. Opción adjuntar</figcaption>
+                    </figure>
+
+                    <p>Para adjuntar un emoji al mensaje, debes pulsar el ícono.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 20. Emoji.jpg" alt="Emoji" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[100px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 20. Emoji</figcaption>
+                    </figure>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 21. Adjuntar emojis.jpg" alt="Adjuntar emojis" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 21. Adjuntar emojis</figcaption>
+                    </figure>
+
+                    <p><strong>Opciones de finalización:</strong> selecciona Finalizar para enviar la respuesta del caso. En esta ventana se brindan dos opciones:<br>
+                    - Finalizar: se da respuesta a las preguntas del cliente sin cerrar el caso, ya que se encuentra aún en gestión por inactividad del usuario.<br>
+                    - Finalizar y cerrar: es la opción en donde se da la respuesta final al cliente y no requiere ningún tipo de interacción posterior. El caso no podrá ser cerrado hasta que el agente dé solución al requerimiento del cliente.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 22. Finalización.jpg" alt="Finalización" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 22. Finalización</figcaption>
+                    </figure>
+
+                    <p>Adicionalmente, en la sección Últimos casos, el agente podrá ver los casos anteriores relacionados al cliente.</p>
+
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 23. Últimos casos.jpg" alt="Últimos casos" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 23. Últimos casos</figcaption>
+                    </figure>
+
+                    <h3>3.3. Cerrar y tipificar casos</h3>
+                    <p>Al momento de pulsar en Finalizar y cerrar caso, se abrirá la siguiente ventana emergente:</p>
+
+                    <!-- Imagen 24. Tipificar casos -->
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 24. Tipificar casos.jpg" alt="Tipificar casos" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-[400px] h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 24. Tipificar casos</figcaption>
+                    </figure>
+
+                    <p>En el panel de Datos del caso, se encuentra un campo de Observaciones, donde se debe colocar una breve descripción de la solicitud y gestión con el cliente, similar a las notas que se dejan en RR. También encontrarán un campo de Etiquetas, donde se debe seleccionar el motivo de contacto del cliente.</p>
+
+                    <!-- Imagen 25. Etiquetas -->
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 25. Etiquetas.jpg" alt="Etiquetas" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 25. Etiquetas</figcaption>
+                    </figure>
+
+                    <p>En el panel de Detalles del caso se encontrarán diferentes estadísticas del caso atendido.<br>
+                    - Total de mensajes: corresponde a todas las interacciones que presentó el caso durante la gestión.<br>
+                    - Respondidos: número de veces que se dio la opción Responder.<br>
+                    - Descartados: número de mensajes descartados.<br>
+                    - Reaperturas: número de veces que se reabrió el caso.<br>
+                    - Total tiempo en cola: tiempo que estuvo el caso antes de ser asignado a un agente.<br>
+                    - Total tiempo trabajado: corresponde al tiempo de gestión del caso.<br>
+                    Finalmente, pulsa la opción Aceptar.</p>
+
+                    <!-- Imagen 26. Detalles de caso -->
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 26. Detalles de caso.jpg" alt="Detalles de caso" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 26. Detalles de caso</figcaption>
+                    </figure>
+
+                    <p>Al cerrar el caso, se visualizará la siguiente pantalla.</p>
+
+                    <!-- Imagen 27. Cerrar caso -->
+                    <figure class="my-6 text-center">
+                        <img src="Imagen 27. Cerrar caso.jpg" alt="Cerrar caso" class="mx-auto rounded-lg shadow-md border border-gray-200 max-w-full h-auto">
+                        <figcaption class="text-xs text-gray-500 italic mt-2">Imagen 27. Cerrar caso</figcaption>
+                    </figure>
+
+                    <h2>4. Preguntas frecuentes – Mis casos</h2>
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-4 rounded border border-gray-200">
+                            <p class="font-bold text-gray-800 !mb-1">¿Qué sucede cuando un agente se coloca en estado “Disponible”?</p>
+                            <p class="text-sm !mb-0">Comienza a recibir casos hasta que se completa su capacidad simultánea.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded border border-gray-200">
+                            <p class="font-bold text-gray-800 !mb-1">¿Cómo puede un agente filtrar las respuestas predefinidas?</p>
+                            <p class="text-sm !mb-0">Por categorías como favoritas, globales, no globales y por tipo de servicio.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded border border-gray-200">
+                            <p class="font-bold text-gray-800 !mb-1">¿Qué opciones tiene un agente al finalizar un caso?</p>
+                            <p class="text-sm !mb-0">Elegir entre "Finalizar" para responder sin cerrar o "Finalizar y cerrar" para respuesta final.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded border border-gray-200">
+                            <p class="font-bold text-gray-800 !mb-1">¿Qué información se debe colocar en el campo de “Observaciones”?</p>
+                            <p class="text-sm !mb-0">Una breve descripción de la solicitud y gestión realizada.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documento 3: Personalidad de Marca -->
+                <div id="doc-marca" class="doc-section hidden animate-fade-in">
+                    <h1 class="text-4xl font-black text-gray-900 mb-4 tracking-tight">PERSONALIDAD DE MARCA</h1>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                        <h2 class="text-lg font-bold text-blue-800 !mt-0 !mb-2 !border-0 !p-0">1. Resumen</h2>
+                        <p class="text-sm text-blue-900 !mb-0">El artículo detalla la importancia de mantener una personalidad de marca coherente y amigable. Se destacan las prácticas recomendadas para la interacción inicial, lectura de necesidades, mantenimiento del contacto, solución de problemas y despedida.</p>
+                    </div>
+                    
+                    <h2>3.1. Introducción: Lineamientos del lenguaje</h2>
+                    <ul class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <li>Hablar en primera persona del singular (Yo).</li>
+                        <li>Los mensajes deben ser claros y la comunicación sencilla, natural y breve.</li>
+                        <li>Tono amigable y cercano, colaborativo y con disposición de servicio.</li>
+                        <li>Construcción de atmósfera de confianza.</li>
+                        <li>Información clara y concisa.</li>
+                    </ul>
+
+                    <h2>3.2. Interacción en primer contacto</h2>
+                    <p>Interactúa de manera amigable. Ejemplos:<br>
+                    <span class="text-green-700 bg-green-50 px-2 rounded font-mono text-sm block mt-2 mb-1">- ¡Buenas tardes, Marcela! 🙌 Hablas con Luz, estoy aquí para ayudarte.</span>
+                    <span class="text-green-700 bg-green-50 px-2 rounded font-mono text-sm block">- Hola, Rebeca, ¿cómo va tu día? Soy María y quiero ayudarte con tu inquietud. 😎</span></p>
+
+                    <h2>3.3. Leer y entender las necesidades</h2>
+                    <p>Palabras de acción: “Voy a... y puedo".<br>
+                    Frases de empatía: “Lo siento”, “te entiendo” o “te ofrezco una disculpa por ello”.</p>
+
+                    <h2>3.4. Mantener el contacto</h2>
+                    <p>Indica cuánto te demoras: “Marcela, no te vayas por favor, regreso en dos minutos con tu información 🙂”.<br>
+                    <strong class="text-red-600">Importante:</strong> No se recomienda usar “contigo”, ya que hace referencia a otra marca.</p>
+
+                    <h2>3.6. Despedida y 3.7 Encuesta</h2>
+                    <p class="italic text-gray-600 border-l-4 border-gray-300 pl-4 mb-4">“Rebeca, ¿es clara para ti la información que te acabo de brindar o tienes alguna otra duda en la que te pueda ayudar? Me dio gusto ayudarte hoy, espero que tengas feliz día 😀".</p>
+                    <p>Coloca el link de la encuesta en un mensaje independiente: “Carlos, me gustaría conocer tu opinión acerca de mi servicio...😉" (Link encuesta).</p>
+                </div>
+
+                <!-- Documento 4: Ortografía y Redacción -->
+                <div id="doc-ortografia" class="doc-section hidden animate-fade-in">
+                    <h1 class="text-4xl font-black text-gray-900 mb-4 tracking-tight">ORTOGRAFÍA Y REDACCIÓN</h1>
+                    <h2>3.1. Introducción</h2>
+                    <ul class="bg-gray-50 p-4 rounded-lg border border-gray-200 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <li>Hablar al usuario en segunda persona del singular (tú). Solo a Claro Empresas se les habla de usted.</li>
+                        <li>Textos simples, sin tecnicismos ni modismos.</li>
+                        <li>Evitar adjetivos como “el mejor" o “exclusivo".</li>
+                        <li>Evitar incluir punto final en los párrafos, no generar corte visual.</li>
+                        <li>Evitar tono imperativo ("debes ingresar", "dirígete a").</li>
+                        <li>Evitar afirmaciones/negaciones directas como "Sí" o "No" en botones/scripts.</li>
+                        <li>Siempre que se utilice un emoji, se debe iniciar con letra mayúscula.</li>
+                        <li>Postpago se utilizará siempre (no pospago). Wi-Fi se escribe así. App en minúscula (salvo inicio).</li>
+                        <li>Formato de fecha: DD/MM/YY. Ejemplo: 29/10/1973.</li>
+                    </ul>
+
+                    <h2>3.2. Ortografía y redacción</h2>
+                    <table class="shadow-sm rounded-lg overflow-hidden">
+                        <tr><th>En vez de escribir…</th><th>Debes escribir…</th><th>Consejo</th></tr>
+                        <tr><td class="text-red-600">Buenos días!</td><td class="text-green-600">¡Buenos días!</td><td>Cuidado con los signos de exclamación.</td></tr>
+                        <tr><td class="text-red-600">¿En que te ayudo?</td><td class="text-green-600">¿En qué te ayudo?</td><td>La palabra "qué" lleva tilde.</td></tr>
+                        <tr><td class="text-red-600">El pago lo tendrias...</td><td class="text-green-600">El pago lo tendrías...</td><td>Cuidado con tildes.</td></tr>
+                    </table>
+
+                    <h2>3.4. Entender los términos</h2>
+                    <table class="shadow-sm rounded-lg overflow-hidden">
+                        <tr><th>Acciones</th><th class="text-center">Tipo de uso</th></tr>
+                        <tr><td>Utilizar tecnicismos / Cuenta de cobro / Mayúsculas sostenidas / Ustedear</td><td class="text-center"><span class="bg-red-100 text-red-800 px-3 py-1 rounded font-bold text-xs">❌ Uso incorrecto</span></td></tr>
+                        <tr><td>Factura / Palabras completas / Tutear</td><td class="text-center"><span class="bg-green-100 text-green-800 px-3 py-1 rounded font-bold text-xs">✔️ Uso correcto</span></td></tr>
+                    </table>
+
+                    <h2>3.5 Emoji</h2>
+                    <p>Reglas de implementación:<br>
+                    - Usar emoji en una oración solo al final o al principio de un enunciado.<br>
+                    - No usar más de 2 emoji por bloque de texto.<br>
+                    - <strong class="text-red-600">Emojis prohibidos:</strong> caras de enojo, cuchillos, animales despectivos, armas.</p>
+                </div>
+
+                <!-- Documento 5: Res CRC -->
+                <div id="doc-crc" class="doc-section hidden animate-fade-in">
+                    <h1 class="text-4xl font-black text-gray-900 mb-4 tracking-tight">RES. 7684 DE LA CRC</h1>
+                    <p class="text-lg text-gray-700 leading-relaxed">Este artículo explica las disposiciones de la Resolución 7684 de la CRC, enfocada en la cancelación y modificación de servicios móviles pospago a través de canales digitales. El texto detalla el alcance de la norma, los procedimientos obligatorios en canales como app Mi Claro y WhatsApp, y la importancia del principio de omnicanalidad, que garantiza que el cliente solo deba suministrar su información una vez.</p>
+                    <p>Se presentan los flujos de atención para trámites como cambio de plan, desactivación de servicios adicionales y migración a prepago. Asimismo, se precisan las actividades que el asesor debe realizar en la atención por WhatsApp, como validar el historial del cliente, evitar solicitar datos redundantes y registrar los tickler correspondientes.</p>
+                    
+                    <h2>Glosario Regulatorio</h2>
+                    <ul class="bg-yellow-50 border border-yellow-200 p-5 rounded-lg space-y-3">
+                        <li><strong>Resolución 7684 de la CRC:</strong> Norma que regula la cancelación y modificación de servicios móviles pospago mediante canales digitales.</li>
+                        <li><strong>Omnicanalidad:</strong> Principio que asegura que el cliente entregue su información solo una vez.</li>
+                        <li><strong>Tickler:</strong> Marcador en el sistema que identifica el tipo de gestión realizada (ejemplo: RETENIDO, PLANPAR, DESACTIV).</li>
+                        <li><strong>WhatsApp asistido:</strong> Canal en el que un asesor continúa el trámite iniciado por el cliente en autoatención.</li>
+                        <li><strong>CUN:</strong> Código Único de Número que debe registrarse en el gestor de PQR para formalizar solicitudes.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ÁREA 2: SIMULADORES PRÁCTICOS -->
+    <main id="area-practica" class="hidden-tab flex flex-1 overflow-y-auto bg-gray-200 p-6">
+        <div class="max-w-7xl mx-auto w-full space-y-6">
+            
+            <!-- 1. SIMULADOR DE MECANOGRAFÍA GAMIFICADO -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-claroRed">
+                <div class="flex justify-between items-end mb-4 border-b pb-4">
+                    <div>
+                        <h2 class="text-2xl font-black text-gray-800 tracking-tight"><i class="fa-solid fa-keyboard text-claroRed mr-2"></i> Reto de Mecanografía y Precisión</h2>
+                        <p class="text-sm text-gray-600 mt-1">Digita el texto exactamente. Los errores en tildes, mayúsculas o signos detendrán tu avance.</p>
+                    </div>
+                    <div class="text-4xl font-black text-claroRed tabular-nums" id="typing-timer">0.0s</div>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Panel de Control y Teclado -->
+                    <div class="col-span-2 space-y-4">
+                        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+                            <input type="text" id="playerName" placeholder="Nombre del Asesor" class="border-2 border-gray-300 p-3 rounded-lg flex-1 focus:outline-none focus:border-claroRed font-bold text-gray-700 placeholder-gray-400 shadow-sm">
+                            <select id="levelSelector" onchange="changeLevel()" class="border-2 border-gray-300 p-3 rounded-lg flex-1 focus:outline-none focus:border-claroRed font-medium text-gray-700 shadow-sm">
+                                <option value="1">Nivel 1: Básico (Políticas CRC)</option>
+                                <option value="2">Nivel 2: Medio (Guion Fiscalía)</option>
+                                <option value="3">Nivel 3: Difícil (Escalamiento y Correos)</option>
+                            </select>
+                            <div class="flex space-x-2">
+                                <button onclick="startTyping()" class="bg-green-600 text-white px-5 py-3 rounded-lg font-bold hover:bg-green-700 transition shadow-md"><i class="fa-solid fa-play mr-1"></i> Iniciar</button>
+                                <button onclick="stopTyping()" class="bg-red-600 text-white px-5 py-3 rounded-lg font-bold hover:bg-red-700 transition shadow-md"><i class="fa-solid fa-stop mr-1"></i> Detener</button>
+                            </div>
+                        </div>
+                        
+                        <div id="target-text" class="p-5 bg-gray-50 border-2 border-gray-200 rounded-xl text-lg font-mono text-gray-800 select-none shadow-inner h-32 overflow-y-auto leading-relaxed">Para realizar la reconexión, el equipo debe estar bloqueado por robo o pérdida, dando cumplimiento a la Resolución 5050 del 2016.</div>
+                        
+                        <textarea id="typing-input" disabled class="w-full p-5 border-2 border-gray-300 rounded-xl focus:border-claroRed font-mono text-lg transition-colors outline-none resize-none bg-gray-100 shadow-inner" rows="3" placeholder="Ingresa tu nombre y presiona Iniciar para activar el teclado..."></textarea>
+                    </div>
+                    
+                    <!-- Leaderboard -->
+                    <div class="bg-white border-2 border-gray-200 rounded-xl p-0 shadow-sm overflow-hidden flex flex-col">
+                        <div class="bg-gray-100 p-3 border-b border-gray-200">
+                            <h3 class="font-bold text-gray-800 text-center text-sm uppercase tracking-wider"><i class="fa-solid fa-trophy text-yellow-500 mr-1"></i> Leaderboard</h3>
+                        </div>
+                        <div class="flex-1 overflow-y-auto h-[250px] bg-gray-50">
+                            <table class="w-full text-sm">
+                                <thead class="sticky top-0 bg-gray-200/90 backdrop-blur">
+                                    <tr class="text-gray-600 text-xs uppercase">
+                                        <th class="p-2 text-left font-bold">Asesor</th>
+                                        <th class="p-2 text-center font-bold">Nivel</th>
+                                        <th class="p-2 text-right font-bold">Tiempo</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaderboard-body" class="divide-y divide-gray-200">
+                                    <!-- Registros dinámicos -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. SIMULADOR DE ROL DUAL (CLÍNICA DE CHAT AVAYA) -->
+            <div class="bg-white p-6 rounded-2xl shadow-lg border-t-4 border-claroRed">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 border-b pb-4 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-black text-gray-800 tracking-tight"><i class="fa-solid fa-headset text-claroRed mr-2"></i> Clínica de Chat: Rol Dual</h2>
+                        <p class="text-sm text-gray-600 mt-1">Dinámica de parejas: Un asesor opera la vista del Cliente (Izquierda) y el otro la interfaz AVAYA SMCC (Derecha).</p>
+                    </div>
+                    <select id="scenarioSelector" onchange="loadScenario()" class="border-2 border-red-200 p-3 rounded-lg bg-red-50 text-claroRed font-bold focus:outline-none focus:border-claroRed shadow-sm w-full md:w-auto">
+                        <option value="0">Seleccionar Escenario de Práctica...</option>
+                        <option value="1">Escenario 1: Reconexión Estándar (Titular)</option>
+                        <option value="2">Escenario 2: Mal Reporte Presencial en CAV</option>
+                        <option value="3">Escenario 3: Reporte Solo Equipo (Sin Actividad)</option>
+                        <option value="4">Escenario 4: Cliente Ofuscado / Falla Evidente</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col lg:flex-row gap-8 h-auto lg:h-[600px]">
+                    
+                    <!-- VISTA 1: CLIENTE (MÓVIL) -->
+                    <div class="w-full lg:w-1/3 flex flex-col items-center justify-center bg-gray-800 rounded-2xl p-6 shadow-2xl relative">
+                        <div class="absolute top-3 left-4 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-widest">Rol: Cliente</div>
+                        <!-- Contenedor Celular -->
+                        <div class="w-full max-w-[320px] h-[520px] bg-black rounded-[2.5rem] p-3 shadow-2xl relative border-4 border-gray-700">
+                            <!-- Notch -->
+                            <div class="absolute top-3 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-b-xl z-20"></div>
+                            
+                            <div class="w-full h-full bg-white rounded-[2rem] overflow-hidden flex flex-col mobile-screen relative">
+                                <!-- Header WhatsApp -->
+                                <div class="bg-[#075e54] text-white pt-8 pb-3 px-3 flex items-center space-x-3 z-10 shadow-md">
+                                    <i class="fa-solid fa-arrow-left mt-1"></i>
+                                    <div class="w-9 h-9 bg-white rounded-full flex items-center justify-center text-[#075e54] font-bold text-lg shadow-sm">C</div>
+                                    <div class="leading-tight flex-1">
+                                        <div class="font-bold text-sm">Claro Colombia</div>
+                                        <div class="text-[10px] text-green-200">en línea</div>
+                                    </div>
+                                    <i class="fa-solid fa-video text-sm opacity-70"></i>
+                                    <i class="fa-solid fa-phone text-sm opacity-70"></i>
+                                </div>
+                                <!-- Chat Area Cliente -->
+                                <div id="client-chat-area" class="flex-1 p-3 overflow-y-auto space-y-3 bg-white/90 z-10 flex flex-col backdrop-blur-sm">
+                                    <!-- Dinámico -->
+                                </div>
+                                <!-- Input Cliente -->
+                                <div class="bg-[#f0f0f0] p-3 flex items-center space-x-2 z-10">
+                                    <i class="fa-regular fa-face-smile text-gray-500 text-xl"></i>
+                                    <input type="text" id="client-input" class="flex-1 rounded-full px-4 py-2 text-sm focus:outline-none border border-gray-300" placeholder="Mensaje..." onkeypress="handleEnter(event, 'client')">
+                                    <button onclick="sendFromClient()" class="w-10 h-10 bg-[#128c7e] text-white rounded-full flex items-center justify-center hover:bg-[#075e54] shadow-md transition transform active:scale-95"><i class="fa-solid fa-paper-plane ml-[-2px]"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VISTA 2: ASESOR (AVAYA SMCC) -->
+                    <div class="w-full lg:w-2/3 flex flex-col border border-gray-300 rounded-2xl overflow-hidden shadow-2xl bg-white relative">
+                        <div class="absolute top-2 right-4 z-30">
+                            <span class="bg-green-500 px-3 py-1 rounded-full text-white font-bold text-xs shadow">Trabajando (Working)</span>
+                        </div>
+                        <div class="bg-gray-900 text-white p-3 flex items-center border-b border-gray-700">
+                            <span class="font-bold text-sm tracking-wide"><i class="fa-solid fa-desktop text-green-400 mr-2"></i> AVAYA SMCC | Espacio de Trabajo</span>
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row flex-1 overflow-hidden">
+                            <!-- Info Contexto (Sidebar Izquierdo AVAYA) -->
+                            <div class="w-full md:w-1/3 bg-gray-50 border-r border-gray-300 p-4 flex flex-col overflow-y-auto">
+                                <h3 class="font-bold text-xs text-gray-500 mb-2 uppercase tracking-wider">Contexto del Caso (Tutor)</h3>
+                                <div id="agent-context" class="text-sm text-gray-800 bg-yellow-100 p-3 border border-yellow-300 rounded-lg mb-6 shadow-inner leading-relaxed">
+                                    Selecciona un escenario en la barra superior para cargar el contexto de la práctica.
+                                </div>
+                                
+                                <h3 class="font-bold text-xs text-gray-500 mb-2 uppercase tracking-wider">Tipificación y Cierre</h3>
+                                <select class="w-full p-2 border border-gray-300 rounded-lg text-sm mb-3 focus:outline-none focus:border-claroRed bg-white shadow-sm">
+                                    <option>Seleccionar etiqueta...</option>
+                                    <option>Reconexión Efectiva - Robo/Pérdida</option>
+                                    <option>Escalamiento por Mal Reporte</option>
+                                    <option>Validación Evidente Fallida</option>
+                                    <option>Reporte Cancelado/Negado</option>
+                                </select>
+                                <textarea class="w-full p-3 border border-gray-300 rounded-lg text-sm flex-1 resize-none focus:outline-none focus:border-claroRed bg-white shadow-sm" placeholder="Notas del Tickler (Ej. INGRES_T o MARCAVDC)..."></textarea>
+                                <button class="mt-4 w-full bg-claroRed text-white py-3 rounded-lg text-sm font-bold hover:bg-claroDark shadow-md transition transform active:scale-95"><i class="fa-solid fa-folder-closed mr-2"></i> Finalizar y Cerrar</button>
+                            </div>
+                            
+                            <!-- Chat Area Asesor (Principal AVAYA) -->
+                            <div class="w-full md:w-2/3 flex flex-col bg-white">
+                                <div class="p-3 bg-gray-100 border-b border-gray-200 text-sm font-bold text-gray-700 flex justify-between items-center shadow-sm z-10">
+                                    <span><i class="fa-brands fa-whatsapp text-green-500 mr-2 text-lg"></i> Interacción Activa: 311-XXX-XXXX</span>
+                                    <i class="fa-solid fa-ellipsis-vertical text-gray-400 cursor-pointer"></i>
+                                </div>
+                                
+                                <div id="agent-chat-area" class="flex-1 p-5 overflow-y-auto space-y-4 bg-white flex flex-col bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]">
+                                    <!-- Dinámico -->
+                                </div>
+                                
+                                <!-- Input Asesor -->
+                                <div class="p-4 bg-gray-50 border-t border-gray-200 flex flex-col gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-10">
+                                    <div class="flex space-x-2 text-gray-500 mb-1">
+                                        <button class="hover:text-claroRed transition"><i class="fa-solid fa-paperclip"></i></button>
+                                        <button class="hover:text-claroRed transition"><i class="fa-regular fa-face-smile"></i></button>
+                                        <button class="hover:text-claroRed transition" title="Respuestas Predefinidas"><i class="fa-solid fa-bolt"></i></button>
+                                    </div>
+                                    <textarea id="agent-input" class="w-full resize-none border-2 border-gray-300 rounded-xl p-3 text-sm focus:outline-none focus:border-claroRed shadow-inner" rows="3" placeholder="Asesor: Redacta tu respuesta aplicando Ortografía, Netiqueta y Políticas..." onkeypress="handleEnter(event, 'agent')"></textarea>
+                                    <div class="flex justify-end">
+                                        <button onclick="sendFromAgent()" class="bg-claroRed text-white px-8 py-2.5 rounded-lg text-sm font-bold hover:bg-claroDark shadow-md transition transform active:scale-95 flex items-center"><i class="fa-solid fa-paper-plane mr-2"></i> Enviar al Cliente</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // --- LÓGICA DE NAVEGACIÓN PRINCIPAL ---
+        function switchMainTab(tab) {
+            document.getElementById('area-teoria').classList.add('hidden-tab');
+            document.getElementById('area-practica').classList.add('hidden-tab');
+            document.getElementById('nav-teoria').classList.remove('bg-claroDark');
+            document.getElementById('nav-practica').classList.remove('bg-claroDark');
+            
+            document.getElementById('area-' + tab).classList.remove('hidden-tab');
+            document.getElementById('nav-' + tab).classList.add('bg-claroDark');
+        }
+
+        function showDoc(docId) {
+            document.querySelectorAll('.doc-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.doc-nav-btn').forEach(el => {
+                el.classList.remove('active', 'text-claroRed', 'bg-red-50', 'border-red-100');
+                el.classList.add('text-gray-600', 'border-transparent');
+            });
+            
+            document.getElementById(docId).classList.remove('hidden');
+            event.currentTarget.classList.remove('text-gray-600', 'border-transparent');
+            event.currentTarget.classList.add('active', 'text-claroRed', 'bg-red-50', 'border-red-100');
+        }
+
+        // --- LÓGICA RETO MECANOGRAFÍA ---
+        const texts = {
+            1: "Para realizar la reconexión, el equipo debe estar bloqueado por robo o pérdida, dando cumplimiento a la Resolución 5050 del 2016.",
+            2: "Señor/a, ¿desea que la información acerca del robo de su celular sea puesta en conocimiento de la Fiscalía General de la Nación? Este proceso de reporte no constituye una denuncia.",
+            3: "Si el error en el reporte del IMEI fue generado por canal presencial, debes escalar el caso por correo electrónico a: wilson.cepeda@claro.com.co y merlyn.gomez@claro.com.co."
+        };
+
+        let timerInt;
+        let timeStart;
+        let isTypingActive = false;
+        const typeInput = document.getElementById('typing-input');
+        const targetDiv = document.getElementById('target-text');
+        const timeDisplay = document.getElementById('typing-timer');
+
+        function changeLevel() {
+            let lvl = document.getElementById('levelSelector').value;
+            targetDiv.innerText = texts[lvl];
+            stopTyping();
+        }
+
+        function startTyping() {
+            let name = document.getElementById('playerName').value;
+            if(!name.trim()) { alert("Por favor, ingresa el nombre del asesor para el Leaderboard."); return; }
+            
+            typeInput.disabled = false;
+            typeInput.value = '';
+            typeInput.focus();
+            timeDisplay.innerText = "0.0s";
+            isTypingActive = true;
+            timeStart = new Date();
+            
+            typeInput.classList.remove('bg-green-100', 'border-green-500', 'bg-red-50', 'border-claroRed', 'bg-blue-50', 'border-blue-500');
+            typeInput.classList.add('bg-gray-100', 'border-gray-300');
+            
+            clearInterval(timerInt);
+            timerInt = setInterval(() => {
+                let diff = ((new Date() - timeStart)/1000).toFixed(1);
+                timeDisplay.innerText = diff + "s";
+            }, 100);
+        }
+
+        function stopTyping() {
+            clearInterval(timerInt);
+            typeInput.disabled = true;
+            isTypingActive = false;
+            typeInput.classList.add('bg-gray-100');
+        }
+
+        typeInput.addEventListener('input', function() {
+            if(!isTypingActive) return;
+            let target = targetDiv.innerText;
+            
+            if(this.value === target) {
+                stopTyping();
+                this.classList.add('bg-green-100', 'border-green-500');
+                this.classList.remove('bg-gray-100', 'border-gray-300', 'bg-blue-50', 'border-blue-500');
+                saveToLeaderboard();
+            } else if (target.startsWith(this.value)) {
+                this.classList.add('bg-blue-50', 'border-blue-500');
+                this.classList.remove('bg-gray-100', 'border-gray-300', 'bg-red-50', 'border-claroRed');
+            } else {
+                this.classList.add('bg-red-50', 'border-claroRed');
+                this.classList.remove('bg-gray-100', 'border-gray-300', 'bg-blue-50', 'border-blue-500');
+            }
+        });
+
+        function saveToLeaderboard() {
+            let name = document.getElementById('playerName').value;
+            let lvl = document.getElementById('levelSelector').value;
+            let time = timeDisplay.innerText;
+            
+            let row = `<tr class="border-b border-gray-200 hover:bg-yellow-50 transition">
+                <td class="p-2 font-bold text-gray-800">${name}</td>
+                <td class="p-2 text-center text-xs bg-gray-100 rounded">Nivel ${lvl}</td>
+                <td class="p-2 text-right font-mono text-claroRed font-bold">${time}</td>
+            </tr>`;
+            document.getElementById('leaderboard-body').insertAdjacentHTML('afterbegin', row);
+        }
+
+        // --- LÓGICA SIMULADOR CLÍNICA CHAT DUAL ---
+        const scnData = {
+            1: { 
+                clientInit: "Hola, ayer recuperé mi celular que me habían robado. Necesito que me habiliten la línea y el equipo por favor.", 
+                agentCtx: "OBJETIVO: Realizar Reconexión.\n\n1. Pide Nombres/Apellidos e ID exactos (Resolución 5050).\n2. Recuerda realizar la validación de Evidente en Poliedro.\n3. Mantén la Personalidad de Marca." 
+            },
+            2: { 
+                clientInit: "Fui al CAV de Unicentro a reportar mi SIM, y el asesor por error me bloqueó el IMEI del equipo que acabo de comprar. ¡Necesito solución ya!", 
+                agentCtx: "OBJETIVO: Mal Reporte Presencial.\n\n1. Aplica lenguaje asertivo y empatía.\n2. Valida identidad obligatoriamente.\n3. Informa que no puedes liberar directo, se escalará correo a los coordinadores (Wilson/Merlyn)." 
+            },
+            3: { 
+                clientInit: "Buenas tardes, quiero bloquear un celular que se me perdió, pero la SIM que tenía adentro no era mía, era de mi empresa.", 
+                agentCtx: "OBJETIVO: Reporte Solo Equipo.\n\n1. Usa el aplicativo 'Reporte y Liberación'.\n2. Debes preguntar si la línea de la empresa tuvo Actividad MIN-IMEI con ese equipo.\n3. Aplica guion de Fiscalía obligatoriamente." 
+            },
+            4: { 
+                clientInit: "Deseo desbloquear la línea 311000000. No soy el titular y no me sé la cédula, pero soy el esposo. Hágale rápido.", 
+                agentCtx: "OBJETIVO: Negación de Trámite.\n\n1. Aplica PNL (Reencuadre positivo).\n2. La política exige titularidad y validación exacta.\n3. Niega el proceso amablemente y ofrece radicar PQR si el cliente insiste." 
+            }
+        };
+
+        const clientArea = document.getElementById('client-chat-area');
+        const agentArea = document.getElementById('agent-chat-area');
+
+        function loadScenario() {
+            let val = document.getElementById('scenarioSelector').value;
+            if(val === "0") {
+                clientArea.innerHTML = '';
+                agentArea.innerHTML = '';
+                document.getElementById('agent-context').innerText = "Selecciona un escenario en la barra superior para cargar el contexto de la práctica.";
+                return;
+            }
+            
+            clientArea.innerHTML = '';
+            agentArea.innerHTML = '';
+            
+            document.getElementById('agent-context').innerText = scnData[val].agentCtx;
+            document.getElementById('client-input').value = scnData[val].clientInit;
+            sendFromClient();
+        }
+
+        function handleEnter(e, source) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); 
+                if(source === 'client') sendFromClient();
+                if(source === 'agent') sendFromAgent();
+            }
+        }
+
+        function sendFromClient() {
+            let input = document.getElementById('client-input');
+            let txt = input.value.trim();
+            if(!txt) return;
+            
+            let time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            // Aparece en el móvil como enviado (verde, derecha)
+            let clientHTML = `
+                <div class="bg-[#dcf8c6] p-2 rounded-lg text-sm max-w-[85%] self-end shadow-sm break-words relative pb-4">
+                    <p class="text-gray-800">${txt}</p>
+                    <span class="text-[9px] text-gray-500 absolute bottom-1 right-2">${time} <i class="fa-solid fa-check-double text-blue-500"></i></span>
+                </div>`;
+            clientArea.insertAdjacentHTML('beforeend', clientHTML);
+            
+            // Aparece en AVAYA como recibido (gris, izquierda)
+            let agentHTML = `
+                <div class="flex justify-start">
+                    <div class="bg-gray-100 border border-gray-200 p-3 rounded-tr-xl rounded-bl-xl rounded-br-xl max-w-[75%] text-sm shadow-sm break-words relative pb-5">
+                        <p class="text-gray-800">${txt}</p>
+                        <span class="text-[9px] text-gray-400 absolute bottom-1 right-2">${time}</span>
+                    </div>
+                </div>`;
+            agentArea.insertAdjacentHTML('beforeend', agentHTML);
+            
+            input.value = '';
+            scrollChats();
+        }
+
+        function sendFromAgent() {
+            let input = document.getElementById('agent-input');
+            let txt = input.value.trim();
+            if(!txt) return;
+            
+            let time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            // Aparece en AVAYA como enviado (rojo, derecha)
+            let agentHTML = `
+                <div class="flex justify-end">
+                    <div class="bg-red-50 border border-red-200 p-3 rounded-tl-xl rounded-bl-xl rounded-br-xl max-w-[75%] text-sm shadow-sm break-words relative pb-5">
+                        <p class="text-gray-800">${txt}</p>
+                        <span class="text-[9px] text-red-400 absolute bottom-1 right-2">${time} <i class="fa-solid fa-check-double text-blue-500"></i></span>
+                    </div>
+                </div>`;
+            agentArea.insertAdjacentHTML('beforeend', agentHTML);
+            
+            // Aparece en móvil como recibido (blanco, izquierda)
+            let clientHTML = `
+                <div class="bg-white p-2 rounded-lg text-sm max-w-[85%] self-start shadow-sm border border-gray-100 break-words relative pb-4">
+                    <p class="text-gray-800">${txt}</p>
+                    <span class="text-[9px] text-gray-400 absolute bottom-1 right-2">${time}</span>
+                </div>`;
+            clientArea.insertAdjacentHTML('beforeend', clientHTML);
+            
+            input.value = '';
+            scrollChats();
+        }
+
+        function scrollChats() {
+            clientArea.scrollTop = clientArea.scrollHeight;
+            agentArea.scrollTop = agentArea.scrollHeight;
+        }
+    </script>
+</body>
+</html>
